@@ -6,11 +6,11 @@ import (
 	"fmt"	
 	"io/ioutil"
 	"log"
-	// "mime"
+	"mime"
 	"mime/multipart"
 	"net/http"
 	"os"
-	// "strings"
+	"strings"
 )
 
 const MAX_MEMORY = 1 * 1024 * 1024
@@ -54,13 +54,19 @@ func multipartRequest(uri string, files map[string]string, datas map[string]stri
 	for key, val := range datas {
 		_ = writer.WriteField(key, val)
 	}
+	
 	err := writer.Close()
 	if err != nil {
 		return nil, err
 	}
-
 	req, _ := http.NewRequest("POST", uri, body)
+	req.Header.Set("Accept", "multipart/form-data; charset=utf-8")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
+	fmt.Println("req.Header", req.Header)
+
+	
+	// req.Header.Set("Accept", writer.FormDataContentType())
+	
 	return req, nil
 }
 
@@ -86,57 +92,52 @@ func main() {
 	}
 	request, err := multipartRequest("http://127.0.0.1:8080/upload", files, datas)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("fatal!", err)
 	}
 	client := &http.Client{}
 	resp, err := client.Do(request)
-	if err != nil {
-		log.Fatal(err)
-	} else {
-		var bodyContent []byte
-		fmt.Println(resp.StatusCode)
-		fmt.Println(resp.Header)
-		resp.Body.Read(bodyContent)
-		resp.Body.Close()
-		fmt.Println(bodyContent)
-	}
+	// if err != nil {
+	// 	log.Fatal("fatal2!", err)
+	// } else {
+	// 	var bodyContent []byte
+	// 	fmt.Println(resp.StatusCode)
+	// 	fmt.Println(resp.Header)
+	// 	resp.Body.Read(bodyContent)
+	// 	resp.Body.Close()
+	// 	fmt.Println(bodyContent)
+	// }
 
 	
 
 	// https://stackoverflow.com/questions/53215506/no-output-after-multipart-newreader
-	// _, params, _ := mime.ParseMediaType(resp.Header.Get("Content-Type"))
-	// mr := multipart.NewReader(resp.Body, params["boundary"])
-
-	// mediaType, params, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
-	// if err != nil {
-	// 		log.Fatal(err)
-	// }
-	// fmt.Println("mediaType", mediaType)
-	// if strings.HasPrefix(mediaType, "multipart/") {
-	// 	mr := multipart.NewReader(resp.Body, params["boundary"])
+	mediaType, params, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+	if err != nil {
+			log.Fatal(err)
+	}
+	fmt.Println("mediaType", mediaType)
+	if strings.HasPrefix(mediaType, "multipart/") {
+		mr := multipart.NewReader(resp.Body, params["boundary"])
 		
-	// 	form, err := mr.ReadForm(MAX_MEMORY)
-	// 	if err != nil {
-	// 		fmt.Println(err)
-	// 	}
+		form, err := mr.ReadForm(MAX_MEMORY)
+		if err != nil {
+			fmt.Println(err)
+		}
 
-	// 	for key, value := range form.Value {
-	// 		// fmt.Fprintf(w, "%s:%s ", key, value)
-	// 		log.Printf("%s:%v", key, value)
-	// 	}
+		for key, value := range form.Value {
+			// fmt.Fprintf(w, "%s:%s ", key, value)
+			log.Printf("%s:%v", key, value)
+		}
 
-	// 	for _, fileHeaders := range form.File {
-	// 		for _, fileHeader := range fileHeaders {
-	// 			file, _ := fileHeader.Open()
-	// 			// path := fmt.Sprintf("files/%s", fileHeader.Filename)
-	// 			filePath := path + "/" + fileHeader.Filename
-	// 			fmt.Println("filePath",filePath)
-	// 			buf, _ := ioutil.ReadAll(file)
-	// 			ioutil.WriteFile(filePath, buf, os.ModePerm)
-	// 		}
-	// 	}
+		for _, fileHeaders := range form.File {
+			for _, fileHeader := range fileHeaders {
+				file, _ := fileHeader.Open()
+				// path := fmt.Sprintf("files/%s", fileHeader.Filename)
+				filePath := path + "/" + fileHeader.Filename
+				fmt.Println("filePath",filePath)
+				buf, _ := ioutil.ReadAll(file)
+				ioutil.WriteFile(filePath, buf, os.ModePerm)
+			}
+		}
 
-	// }
-
-	
+	}	
 }
