@@ -40,8 +40,11 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 2. send back server side files and datas
+	// https://peter.bourgon.org/blog/2019/02/12/multipart-http-responses.html
 	writer := multipart.NewWriter(w)
 	w.Header().Set("Content-Type", writer.FormDataContentType())
+	// w.Header().Set("Content-Type", "multipart/form-data")
+	fmt.Println("w.Header", w.Header)
 
 	path1 := path + "/testserver1.txt"
 	path2 := path + "/testserver2.txt"
@@ -106,6 +109,6 @@ func upload(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/upload", upload)
-	http.Handle("/", http.FileServer(http.Dir("static")))
+	// http.Handle("/", http.FileServer(http.Dir("static")))
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
