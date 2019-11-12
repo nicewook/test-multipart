@@ -6,10 +6,14 @@ import (
 	"fmt"	
 	"io/ioutil"
 	"log"
+	// "mime"
 	"mime/multipart"
 	"net/http"
 	"os"
+	// "strings"
 )
+
+const MAX_MEMORY = 1 * 1024 * 1024
 
 // https://gist.github.com/mattetti/5914158/f4d1393d83ebedc682a3c8e7bdc6b49670083b84
 // https://matt.aimonetti.net/posts/2013-07-golang-multipart-file-upload-example/
@@ -96,4 +100,43 @@ func main() {
 		resp.Body.Close()
 		fmt.Println(bodyContent)
 	}
+
+	
+
+	// https://stackoverflow.com/questions/53215506/no-output-after-multipart-newreader
+	// _, params, _ := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+	// mr := multipart.NewReader(resp.Body, params["boundary"])
+
+	// mediaType, params, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+	// if err != nil {
+	// 		log.Fatal(err)
+	// }
+	// fmt.Println("mediaType", mediaType)
+	// if strings.HasPrefix(mediaType, "multipart/") {
+	// 	mr := multipart.NewReader(resp.Body, params["boundary"])
+		
+	// 	form, err := mr.ReadForm(MAX_MEMORY)
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	}
+
+	// 	for key, value := range form.Value {
+	// 		// fmt.Fprintf(w, "%s:%s ", key, value)
+	// 		log.Printf("%s:%v", key, value)
+	// 	}
+
+	// 	for _, fileHeaders := range form.File {
+	// 		for _, fileHeader := range fileHeaders {
+	// 			file, _ := fileHeader.Open()
+	// 			// path := fmt.Sprintf("files/%s", fileHeader.Filename)
+	// 			filePath := path + "/" + fileHeader.Filename
+	// 			fmt.Println("filePath",filePath)
+	// 			buf, _ := ioutil.ReadAll(file)
+	// 			ioutil.WriteFile(filePath, buf, os.ModePerm)
+	// 		}
+	// 	}
+
+	// }
+
+	
 }
