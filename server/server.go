@@ -1,12 +1,11 @@
 package main
 
 import (
-	// "bytes"
+	"crypto/hmac"
 	"encoding/base64"
 	"encoding/hex"
 	"io/ioutil"
 	"log"
-	// "mime"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -26,8 +25,8 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	// parse key/value data
 	rcvData := make(map[string]string)
 	for key, value := range r.MultipartForm.Value {
-		log.Printf("key:value %s:%s", key, value)
-		log.Printf("value type: %T, %T", key, value)
+		// log.Printf("key:value %s:%s", key, value)
+		// log.Printf("value type: %T, %T", key, value)
 		rcvData[key] = value[0]
 	}
 
@@ -36,6 +35,12 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	log.Println("clientRandomNumber:", clientRandomNumber)  // 1122334455
 	log.Println("clientHMAC:", hex.EncodeToString(clientHMAC))  // 8813d40ec5d335d4724f3ecffa766a4c3e076006a12b7875520f809dde17bfde
 
+	expectedHMAC := []byte{0x88,0x13,0xd4,0x0e,0xc5,0xd3,0x35,0xd4,0x72,0x4f,0x3e,0xcf,0xfa,0x76,0x6a,0x4c,0x3e,0x07,0x60,0x06,0xa1,0x2b,0x78,0x75,0x52,0x0f,0x80,0x9d,0xde,0x17,0xbf,0xde}
+	if hmac.Equal(clientHMAC, expectedHMAC) {
+		log.Println("Yeah, I've got expectedHMAC!")
+	} else {
+		log.Println("Oh, No. Wrong HMAC from the client!")
+	}
 
 	// parse and save files
 	path, _ := os.Getwd()
@@ -63,9 +68,9 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	randomServerNumber := "9988776655"
-	hmac := []byte{0x99,0x99,0x99,0x0e,0xc5,0xd3,0x35,0xd4,0x72,0x4f,0x3e,0xcf,0xfa,0x76,0x6a,0x4c,0x3e,0x07,0x60,0x06,0xa1,0x2b,0x78,0x75,0x52,0x0f,0x80,0x9d,0xde,0x17,0xbf,0xde}  
+	serverHMAC := []byte{0x99,0x99,0x99,0x0e,0xc5,0xd3,0x35,0xd4,0x72,0x4f,0x3e,0xcf,0xfa,0x76,0x6a,0x4c,0x3e,0x07,0x60,0x06,0xa1,0x2b,0x78,0x75,0x52,0x0f,0x80,0x9d,0xde,0x17,0xbf,0xde}
 	// 9999990ec5d335d4724f3ecffa766a4c3e076006a12b7875520f809dde17bfde
-	hmacBase64 := base64.StdEncoding.EncodeToString(hmac)
+	hmacBase64 := base64.StdEncoding.EncodeToString(serverHMAC)
 	
 	sndData := map[string]string {
 		"data1": randomServerNumber, // randomNumber
