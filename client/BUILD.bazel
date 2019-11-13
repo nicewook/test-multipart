@@ -9,7 +9,7 @@ go_library(
 
 go_binary(
     name = "client",
+    data = glob(["*.txt"]),
     embed = [":go_default_library"],
     visibility = ["//visibility:public"],
-    data = glob(["*.txt"]),
 )
