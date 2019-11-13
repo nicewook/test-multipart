@@ -15,10 +15,7 @@ Sending files and data with multipart/form-data type between HTTP Server and Cli
    ```
 
 2. Run client in client directory
-
-   ```
-   bazel run //client:client
-   ```
+    ```$go run client.go```
 
 3. Then, you can see server and client directory's files are sent to each other
 
@@ -33,4 +30,4 @@ Reference links
 - response with `multipart/form-data`
   - https://peter.bourgon.org/blog/2019/02/12/multipart-http-responses.html
 - client side simple parsing of `response multipart/form-data`
-  - // https://stackoverflow.com/questions/53215506/no-output-after-multipart-newreader
+  - https://stackoverflow.com/questions/53215506/no-output-after-multipart-newreader
