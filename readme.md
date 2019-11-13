@@ -15,6 +15,7 @@ Sending files and data with multipart/form-data type between HTTP Server and Cli
 
 
 2. Run client in client directory
+
     ```$go run client.go```
 
 3. Then, you can see server and client directory's files are sent to each other
