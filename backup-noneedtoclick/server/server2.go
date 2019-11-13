@@ -19,7 +19,7 @@ const MAX_MEMORY = 1 * 1024 * 1024
 
 func upload(w http.ResponseWriter, r *http.Request) {
 
-	// 1. get and manage files and datas
+	// 1. get and manage files and data
 
 	if err := r.ParseMultipartForm(MAX_MEMORY); err != nil {
 		fmt.Println("ParseMultipartForm err:", err)
@@ -42,7 +42,7 @@ func upload(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// 2. send back server side files and datas
+	// 2. send back server side files and data
 	// https://peter.bourgon.org/blog/2019/02/12/multipart-http-responses.html
 
 	mw := multipart.NewWriter(w)
@@ -119,7 +119,7 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	// // 9988770ec5d335d4724f3ecffa766a4c3e076006a12b7875520f809dde17bfde
 	// hmacString := hex.EncodeToString(hmac)
 
-	// datas := map[string]string {
+	// data := map[string]string {
 	// 	"data1":      randomServerNumber,  // randomNumber
 	// 	"data2":      hmacString,  // hmac
 	// }
@@ -156,7 +156,7 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	// // 2-2. add key, value
-	// for key, val := range datas {
+	// for key, val := range data {
 	// 	_ = writer.WriteField(key, val)
 	// }
 	// err := writer.Close()
