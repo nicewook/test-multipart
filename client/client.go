@@ -5,7 +5,7 @@ import (
 	"crypto/hmac"
 	"encoding/base64"
 	"encoding/hex"
-	"fmt"	
+	"fmt"
 	"io/ioutil"
 	"log"
 	"mime"
@@ -43,7 +43,7 @@ func multipartRequest(uri string, files map[string]string, data map[string]strin
 		}
 		file.Close()
 
-		// 3. create form file part1. 
+		// 3. create form file part1.
 		part, err := mw.CreateFormFile(paramName, fileInfo.Name())
 		if err != nil {
 			return nil, err
@@ -55,7 +55,7 @@ func multipartRequest(uri string, files map[string]string, data map[string]strin
 	for key, val := range data {
 		_ = mw.WriteField(key, val)
 	}
-	
+
 	err := mw.Close()
 	if err != nil {
 		return nil, err
@@ -63,15 +63,14 @@ func multipartRequest(uri string, files map[string]string, data map[string]strin
 	req, _ := http.NewRequest("POST", uri, body)
 	req.Header.Set("Accept", "multipart/form-data; charset=utf-8")
 	req.Header.Add("Content-Type", mw.FormDataContentType())
-	
+
 	return req, nil
 }
 
 func main() {
 	// 1. prepare files and data
-	path, _ := os.Getwd()
-	path1 := path + "/test1.txt"
-	path2 := path + "/test2.txt"
+	path1 := "client/test1.txt"
+	path2 := "client/test2.txt"
 
 	files := map[string]string {
 		"file1": path1,
@@ -79,7 +78,7 @@ func main() {
 	}
 
 	clientRandomNumber := "1122334455"
-	clientHMAC := []byte{0x88,0x13,0xd4,0x0e,0xc5,0xd3,0x35,0xd4,0x72,0x4f,0x3e,0xcf,0xfa,0x76,0x6a,0x4c,0x3e,0x07,0x60,0x06,0xa1,0x2b,0x78,0x75,0x52,0x0f,0x80,0x9d,0xde,0x17,0xbf,0xde}  
+	clientHMAC := []byte{0x88,0x13,0xd4,0x0e,0xc5,0xd3,0x35,0xd4,0x72,0x4f,0x3e,0xcf,0xfa,0x76,0x6a,0x4c,0x3e,0x07,0x60,0x06,0xa1,0x2b,0x78,0x75,0x52,0x0f,0x80,0x9d,0xde,0x17,0xbf,0xde}
 	// 8813d40ec5d335d4724f3ecffa766a4c3e076006a12b7875520f809dde17bfde
 	hmacBase64 := base64.StdEncoding.EncodeToString(clientHMAC)
 
@@ -88,9 +87,11 @@ func main() {
 		"data2": hmacBase64,  			 // hmac
 	}
 	request, err := multipartRequest("http://127.0.0.1:8080/upload", files, data)
+
 	if err != nil {
-		log.Fatal("fatal!", err)
+    log.Fatalf("Unable to run multipartRequest: %v", err)
 	}
+
 	client := &http.Client{}
 	resp, err := client.Do(request)
 
@@ -100,7 +101,7 @@ func main() {
 			log.Fatal(err)
 	}
 	if strings.HasPrefix(mediaType, "multipart/") {
-		mr := multipart.NewReader(resp.Body, params["boundary"])		
+		mr := multipart.NewReader(resp.Body, params["boundary"])
 		form, err := mr.ReadForm(MAX_MEMORY)
 		if err != nil {
 			fmt.Println(err)
@@ -129,10 +130,10 @@ func main() {
 		for _, fileHeaders := range form.File {
 			for _, fileHeader := range fileHeaders {
 				file, _ := fileHeader.Open()
-				filePath := path + "/" + fileHeader.Filename
+				filePath := fileHeader.Filename
 				buf, _ := ioutil.ReadAll(file)
 				ioutil.WriteFile(filePath, buf, os.ModePerm)
 			}
 		}
-	}	
+	}
 }

@@ -1,0 +1,8 @@
+backup-noneedtoclick/server/BUILD.bazel
+backup-noneedtoclick/server2/BUILD.bazel
+backup-noneedtoclick/client/BUILD.bazel
+backup-noneedtoclick/client2/BUILD.bazel
+bazel-bin
+bazel-out
+bazel-test-multipart
+bazel-testlogs
