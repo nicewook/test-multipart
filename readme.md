@@ -1,3 +1,9 @@
+<p align=center>
+<a href="https://hits.seeyoufarm.com"/><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fnicewook%2Ftest-multipart"/></a>
+</p>
+
+---
+
 # Sample codes for reqeust / response with files and data (key/value)
 
 
@@ -29,7 +35,4 @@ Reference links
   - // https://stackoverflow.com/questions/53215506/no-output-after-multipart-newreader 
 
 
----
-<p align=center>
-[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fnicewook%2Ftest-multipart)](https://hits.seeyoufarm.com)
-</p>
+
